@@ -817,17 +817,25 @@ app.delete('/budget/:id', async(req, res) => {
   const { id } = req.params;
 
   try {
-    // Get category_id first
+    // Get category_id and user_id first
     const [rows] = await dbAsync.query(
-      'SELECT category_id FROM Budget WHERE budget_id = ?', [id]
+      'SELECT category_id, user_id FROM Budget WHERE budget_id = ?', [id]
     );
     if (rows.length === 0) return res.status(404).json({ error: "Budget not found" });
+    
     const categoryId = rows[0].category_id;
+    const userId = rows[0].user_id;
+
+    // Delete transactions for this user in this category
+    await dbAsync.query(
+        'DELETE FROM Transactions WHERE category_id = ? AND user_id = ?',
+        [categoryId, userId]
+    );
 
     // Delete budget
     await dbAsync.query('DELETE FROM Budget WHERE budget_id = ?', [id]);
 
-    // Delete the category too
+    // Delete the category 
     await dbAsync.query('DELETE FROM SpendCategory WHERE category_id = ?', [categoryId]);
 
     res.json({ success: true, message: "Budget deleted" });
@@ -839,13 +847,13 @@ app.delete('/budget/:id', async(req, res) => {
 /* ================= AUTO PRICE ALERT POLLING ================= */
 
 setInterval(async () => {
-    try {
-        const [products] = await dbAsync.query(
-            `SELECT P.product_id, P.product_name, P.current_price, 
-                    P.target_price, P.last_alert_sent, U.email
-             FROM Product P
-             JOIN Users U ON P.user_id = U.user_id`
-        );
+  try {
+    const [products] = await dbAsync.query(
+      `SELECT P.product_id, P.product_name, P.current_price, 
+          P.target_price, P.last_alert_sent, U.email
+      FROM Product P
+      JOIN Users U ON P.user_id = U.user_id`
+    );
 
         for (let product of products) {
             const currentPrice = Number(product.current_price);
