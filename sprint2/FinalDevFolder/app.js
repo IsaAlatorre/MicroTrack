@@ -819,23 +819,23 @@ app.delete('/budget/:id', async(req, res) => {
   try {
     // Get category_id and user_id first
     const [rows] = await dbAsync.query(
-      'SELECT category_id, user_id FROM Budget WHERE budget_id = ?', [id]
+        'SELECT category_id, user_id FROM Budget WHERE budget_id = ?', [id]
     );
     if (rows.length === 0) return res.status(404).json({ error: "Budget not found" });
-    
+
     const categoryId = rows[0].category_id;
     const userId = rows[0].user_id;
 
-    // Delete transactions for this user in this category
+    // 1. Delete transactions first
     await dbAsync.query(
         'DELETE FROM Transactions WHERE category_id = ? AND user_id = ?',
         [categoryId, userId]
     );
 
-    // Delete budget
+    // 2. Delete the budget (removes the FK reference to SpendCategory)
     await dbAsync.query('DELETE FROM Budget WHERE budget_id = ?', [id]);
 
-    // Delete the category 
+    // 3. Now safe to delete the category
     await dbAsync.query('DELETE FROM SpendCategory WHERE category_id = ?', [categoryId]);
 
     res.json({ success: true, message: "Budget deleted" });
