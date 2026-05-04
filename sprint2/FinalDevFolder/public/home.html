@@ -267,7 +267,10 @@
    async function loadBudgets() {
        const userId = parseInt(localStorage.getItem("userId"));
        const mainContent = document.getElementById("mainContent");
-       if (!userId) return;
+       if (!userId){
+        drawPieChart([]);
+        return;
+       }
       
        const response = await fetch(`${API_URL}/budgets/${userId}`);
        const budgets = await response.json();
@@ -279,7 +282,9 @@
        mainContent.style.visibility = "visible";
       
        if (budgets.length === 0) {
-           return;
+            drawPieChart([]);
+            renderLegend([]);
+            return;
        }
       
        budgetList.innerHTML = '';
