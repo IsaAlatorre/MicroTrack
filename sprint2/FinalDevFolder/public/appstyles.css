@@ -226,11 +226,6 @@ h1 {
 
 #budgetPieChart {
     display: block;
-    width: 160px;
-    height: 160px;
-    max-width: 100%;
-    border: 30px solid #e0e0e0;
-    border-radius: 50%;
 }
 
 .summary-divider {
