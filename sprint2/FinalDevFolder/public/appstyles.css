@@ -214,6 +214,57 @@ h1 {
     color: #333;
 }
 
+/* Pie chart */
+.pie-chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 18px auto 24px;
+    width: 100%;
+    max-width: 180px;
+}
+
+#budgetPieChart {
+    display: block;
+    width: 160px;
+    height: 160px;
+    max-width: 100%;
+    border: 30px solid #e0e0e0;
+    border-radius: 50%;
+}
+
+.summary-divider {
+    width: 40px;
+    height: 2px;
+    background: #e0e0e059;
+    margin: 12px auto 10px;
+    border-radius: 2px;
+}
+
+.pie-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 12px;
+    margin-top: 10px;
+    padding: 0 5px;
+}
+
+.pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: #666;
+}
+
+.pie-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
 .alert-box {
     background: #FFF3E0;
     border-left: 4px solid #FF9800;
@@ -458,7 +509,6 @@ h1 {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     position: relative;
     overflow: hidden;
     
@@ -576,11 +626,6 @@ body.auth-page {
     width: 100%;
 }
         
-.password-hint {
-    font-size: 11px;
-    color: #999;
-    margin-top: 5px;
-}
 .auto-update-badge {
     display: inline-block;
     background: #4CAF50;
@@ -668,48 +713,4 @@ body.auth-page {
     padding:2px 6px;
     border-radius:6px;
     margin-left:6px;
-}
-/* Pie chart */
-.pie-chart-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 8px auto 0;
-    width: 140px;
-    height: 140px;
-}
- 
-.pie-center-text {
-    position: absolute;
-    text-align: center;
-    pointer-events: none;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-}
- 
-.pie-legend {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px 12px;
-    margin-top: 10px;
-    padding: 0 5px;
-}
- 
-.pie-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    color: #666;
-}
- 
-.pie-legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    flex-shrink: 0;
 }
