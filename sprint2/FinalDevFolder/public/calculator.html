@@ -917,9 +917,31 @@
             document.getElementById('grp-step-plan').style.display  = 'block';
             document.getElementById('grp-code-display').textContent = inviteCode;
             document.getElementById('grp-plan-name').textContent    = '📋 ' + groupName;
+            startGroupPolling();
+        }
+
+        // Auto-polling for live group updates
+        let groupPollInterval = null;
+
+        function startGroupPolling() {
+            stopGroupPolling(); // clear any existing interval first
+            groupPollInterval = setInterval(() => {
+                if (window.currentGroupId) {
+                    loadGroupPlan();
+                    loadContributions();
+                }
+            }, 5000); // refresh every 5 seconds
+        }
+
+        function stopGroupPolling() {
+            if (groupPollInterval) {
+                clearInterval(groupPollInterval);
+                groupPollInterval = null;
+            }
         }
 
         function leaveGroupView() {
+            stopGroupPolling();
             window.currentGroupId      = null;
             window.currentGroupCreator = null;
             document.getElementById('grp-step-plan').style.display   = 'none';
