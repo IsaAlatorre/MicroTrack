@@ -817,7 +817,6 @@ app.delete('/budget/:id', async(req, res) => {
   const { id } = req.params;
 
   try {
-    // Get category_id and user_id first
     const [rows] = await dbAsync.query(
         'SELECT category_id, user_id FROM Budget WHERE budget_id = ?', [id]
     );
@@ -826,22 +825,28 @@ app.delete('/budget/:id', async(req, res) => {
     const categoryId = rows[0].category_id;
     const userId = rows[0].user_id;
 
-    // 1. Delete transactions first
+    // 1. Delete transactions for this user + category
     await dbAsync.query(
         'DELETE FROM Transactions WHERE category_id = ? AND user_id = ?',
         [categoryId, userId]
     );
 
-    // 2. Delete the budget (removes the FK reference to SpendCategory)
+    // 2. Delete the budget
     await dbAsync.query('DELETE FROM Budget WHERE budget_id = ?', [id]);
 
-    // 3. Now safe to delete the category
-    await dbAsync.query('DELETE FROM SpendCategory WHERE category_id = ?', [categoryId]);
+    // 3. Only delete the category if NO other budgets reference it
+    const [otherBudgets] = await dbAsync.query(
+        'SELECT budget_id FROM Budget WHERE category_id = ? LIMIT 1',
+        [categoryId]
+    );
+    if (otherBudgets.length === 0) {
+        await dbAsync.query('DELETE FROM SpendCategory WHERE category_id = ?', [categoryId]);
+    }
 
     res.json({ success: true, message: "Budget deleted" });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 /* ================= AUTO PRICE ALERT POLLING ================= */
